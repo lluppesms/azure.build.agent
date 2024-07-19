@@ -40,7 +40,7 @@ This document will show you how to create a Azure Container Apps hosted Devops B
 
   ![Created pool](./images/Agent-Pool-03.png)
 
---      -
+---
 
 ### 3. Create the Azure Container App environment
 
