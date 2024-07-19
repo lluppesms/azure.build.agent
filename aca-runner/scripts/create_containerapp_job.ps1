@@ -15,11 +15,11 @@
 #   Connect-AzAccount
 # ------------------------------------------------------------------------------------
 # Run with only required parameters:
-# ./create_containerapp_job.ps1 -UniqueId 'xxx' -AzdoOrgName 'luppesdemo' -AzdoToken ''
+# ./create_containerapp_job.ps1 -UniqueId 'xxx' -AzdoOrgName 'mycompany' -AzdoToken ''
 # ------------------------------------------------------------------------------------
 # Run with all parameters:
 # ./create_containerapp_job.ps1 `
-#  -AzdoOrgUrl 'https://dev.azure.com/luppesdemo/' `
+#  -AzdoOrgUrl 'https://dev.azure.com/mycompany/' `
 #  -AzdoAgentPoolName 'aca_build_runner' `
 #  -AzdoToken '' `
 #  -ResourceGroupName 'rg_aca_agent' `

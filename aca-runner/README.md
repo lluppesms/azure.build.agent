@@ -40,7 +40,7 @@ This document will show you how to create a Azure Container Apps hosted Devops B
 
   ![Created pool](./images/Agent-Pool-03.png)
 
----
+--      -
 
 ### 3. Create the Azure Container App environment
 
@@ -62,7 +62,7 @@ This document will show you how to create a Azure Container Apps hosted Devops B
 
 - Open a PowerShell window and run [create_containerapp_job.ps1](scripts/create_containerapp_job.ps1) to create the job.
 
-- Your Azure Organization Name will be the second node of the URL for your Azure DevOps Organization.  For instance, if your organization is `https://dev.azure.com/mycompanyorg`, then your organization name is `mycompanyorg`.
+- Your Azure Organization Name will be the second node of the URL for your Azure DevOps Organization.  For instance, if your organization is `https://dev.azure.com/mycompany`, then your organization name is `mycompany`.
 
 - The Token in this command is the PAT token you created in step 1.
 
@@ -71,7 +71,7 @@ This document will show you how to create a Azure Container Apps hosted Devops B
 #### Example
 
 ``` bash
-./create_containerapp_job.ps1 -UniqueId 'xxx' -AzdoOrgName 'mycompanyorg' -AzdoToken 'xxxxx'
+./create_containerapp_job.ps1 -UniqueId 'xxx' -AzdoOrgName 'mycompany' -AzdoToken 'xxxxx'
 ```
 
 ---
