@@ -68,19 +68,17 @@ This document will show you how to create a Azure Container Apps hosted Devops B
 
 - There are other parameters that default to the values in the script, but you can override them if you want.
 
-#### Example
+- **Note:** This example will use the dockerfile `Dockerfile.pipelines` in the `docker` folder (which you can override with the -DockerFile parameter).  If you need your build server to have specific utilities, copy and modify the dockerfile to include those.
+
+  - Please note that the ACA environment currently only supports **LINUX** build servers.
+
+#### Example Command
 
 ``` bash
 ./create_containerapp_job.ps1 -UniqueId 'xxx' -AzdoOrgName 'mycompany' -AzdoToken 'xxxxx'
 ```
 
 ---
-
-### Notes
-
-- This is still not working right...
-
-- I tried to add the MI into the ACR with AcrPull rights in between step 3 and 4, but that didn't help...
 
 ## Reference
 

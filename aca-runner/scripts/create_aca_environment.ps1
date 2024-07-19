@@ -24,8 +24,9 @@
 # -Location 'northcentralus' `
 # -ContainerAppsEnvSuffix 'aca-agent-env' `
 # -ContainerRegistrySuffix 'acaagentacr' `
-# -ManagedIdentitySuffix 'aca-agent-mi'
-# -ContainerImageName 'azure-pipelines-agent:1.0'
+# -ManagedIdentitySuffix 'aca-agent-mi' `
+# -ContainerImageName 'azure-pipelines-agent:1.0' `
+# -DockerFile = "Dockerfile.pipelines"
 # ------------------------------------------------------------------------------------
 
 param(
@@ -35,12 +36,14 @@ param(
     [Parameter()] [string] $ManagedIdentitySuffix = 'aca-agent-mi',
     [Parameter()] [string] $ContainerAppsEnvSuffix  = 'aca-agent-env',
     [Parameter()] [string] $ContainerRegistrySuffix  = 'acaagentacr',
-    [Parameter()] [string] $ContainerImageName = 'azure-pipelines-agent:1.0'
-  )
+    [Parameter()] [string] $ContainerImageName = 'azure-pipelines-agent:1.0',
+    [Parameter()] [string] $DockerFile = "Dockerfile.pipelines"
+    )
 
 $ManagedIdentityResourceName = $UniqueId + '-' + $ManagedIdentitySuffix
 $ContainerRegistryName = $UniqueId + $ContainerRegistrySuffix
 $ContainerAppsEnvName = $UniqueId + '-' + $ContainerAppsEnvSuffix
+$DockerFilePath = "../docker/" + $DockerFile
 
 Write-Host "** Starting ACR and CA deploy with the following parameters:"
 Write-Host "** ResourceGroupName: $ResourceGroupName"
@@ -85,12 +88,20 @@ az acr create `
     --sku Basic `
     --admin-enabled true
 
-Write-Host "** Building ACR Build Server Image $ContainerImageName..."
+# # If you use the default version from the example - it has almost no utilities installed....
+Write-Host "** Building ACR Build Server Image from $DockerFilePath to $ContainerImageName..."
 az acr build `
     --registry $ContainerRegistryName `
     --image $ContainerImageName `
-    --file "Dockerfile.azure-pipelines" `
-    "https://github.com/Azure-Samples/container-apps-ci-cd-runner-tutorial.git"
+    --file $DockerFilePath
+
+## Note If you use the default docker file from the example -> that image has almost no utilities installed (Bicep, Powershell, etc.)....
+# Write-Host "** Building ACR Build Server Image $ContainerImageName..."
+# az acr build `
+#     --registry $ContainerRegistryName `
+#     --image $ContainerImageName `
+#     --file "Dockerfile.azure-pipelines" `
+#     "https://github.com/Azure-Samples/container-apps-ci-cd-runner-tutorial.git"
 
 Write-Host "** Creating Managed Identity $ManagedIdentityResourceName..."
 az identity create --name $ManagedIdentityResourceName --resource-group $ResourceGroupName

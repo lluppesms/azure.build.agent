@@ -11,6 +11,11 @@
 #      (Tried to add the MI into the ACR with AcrPull rights, but that didn't help...)
 #   4. Run create_containerapp_job.ps1 with your Unique Id and OrgName and Token to create the job.
 # ------------------------------------------------------------------------------------
+# Note: 
+#   This solution using ACA does not support Windows Container Images
+#   And - the example Linux Container Image only provides basic tools like CURL
+#   So -- you may need to create your own DockerFile with the proper tools
+# ------------------------------------------------------------------------------------
 # You may need to run this first in PowerShell...
 #   Connect-AzAccount
 # ------------------------------------------------------------------------------------
@@ -45,7 +50,7 @@ param(
     [Parameter()] [string] $JobSuffix = 'azure-pipelines-agent-job'
 )
 
-$AzdoOrgUrl = 'https://dev.azure.com/' + $AzdoOrgName + '/'
+$AzdoOrgUrl = 'https://dev.azure.com/' + $AzdoOrgName # Make sure no trailing / is present at the end of the URL.
 $ManagedIdentityResourceName = $UniqueId + '-' + $ManagedIdentitySuffix
 $ContainerRegistryName = $UniqueId + $ContainerRegistrySuffix
 $ContainerAppsEnvName = $UniqueId + '-' + $ContainerAppsEnvSuffix
@@ -102,26 +107,8 @@ Write-Host "**   Env: $ContainerAppsEnvName"
 Write-Host "**   Image: $ContainerRegistryName.azurecr.io/$ContainerImageName" 
 Write-Host "**   PoolName: $AzdoAgentPoolName"
 Write-Host "**   AzdoOrgUrl: $AzdoOrgUrl"
-# az containerapp job create -n $JobName -g $ResourceGroupName --environment $ContainerAppsEnvName `
-#     --trigger-type Event `
-#     --replica-timeout 1800 `
-#     --replica-retry-limit 0 `
-#     --replica-completion-count 1 `
-#     --parallelism 1 `
-#     --image "$ContainerRegistryName.azurecr.io/$ContainerImageName" `
-#     --min-executions 0 `
-#     --max-executions 10 `
-#     --polling-interval 30 `
-#     --scale-rule-name "azure-pipelines" `
-#     --scale-rule-type "azure-pipelines" `
-#     --scale-rule-metadata "poolName=$AzdoAgentPoolName" "targetPipelinesQueueLength=1" `
-#     --scale-rule-auth "personalAccessToken=personal-access-token" "organizationURL=organization-url" `
-#     --cpu "2.0" `
-#     --memory "4Gi" `
-#     --secrets "personal-access-token=$AzdoToken" "organization-url=$AzdoOrgUrl" `
-#     --env-vars "AZP_TOKEN=secretref:personal-access-token" "AZP_URL=secretref:organization-url" "AZP_POOL=$AzdoAgentPoolName" `
-#     --registry-server "$ContainerRegistryName.azurecr.io" `
-#     --registry-identity $ManagedIdentityResourceId
+# Note: set max-executions to be how many jobs are picked up each time the job polls
+# Set the polling-interval to be how often it check for new jobs (in seconds)
 az containerapp job create -n "$JobName" -g "$ResourceGroupName" --environment "$ContainerAppsEnvName" `
     --trigger-type Event `
     --replica-timeout 1800 `
@@ -130,8 +117,8 @@ az containerapp job create -n "$JobName" -g "$ResourceGroupName" --environment "
     --parallelism 1 `
     --image "$ContainerRegistryName.azurecr.io/$ContainerImageName" `
     --min-executions 0 `
-    --max-executions 10 `
-    --polling-interval 30 `
+    --max-executions 5 `
+    --polling-interval 10 `
     --scale-rule-name "azure-pipelines" `
     --scale-rule-type "azure-pipelines" `
     --scale-rule-metadata "poolName=$AzdoAgentPoolName" "targetPipelinesQueueLength=1" `
@@ -140,7 +127,8 @@ az containerapp job create -n "$JobName" -g "$ResourceGroupName" --environment "
     --memory "4Gi" `
     --secrets "personal-access-token=$AzdoToken" "organization-url=$AzdoOrgUrl" `
     --env-vars "AZP_TOKEN=secretref:personal-access-token" "AZP_URL=secretref:organization-url" "AZP_POOL=$AzdoAgentPoolName" `
-    --registry-server "$ContainerRegistryName.azurecr.io"
+    --registry-server "$ContainerRegistryName.azurecr.io" `
+    --registry-identity $ManagedIdentityResourceId
 
 Write-Host "** Deleting placeholder job..."
 az containerapp job delete -n $PlaceholderJobName -g $ResourceGroupName --yes
