@@ -29,13 +29,16 @@ This document will show you how to create a Azure Container Apps hosted Devops B
 ### 2. Create an Agent Pool to be linked to your Container App
   
 - Go to Azure DevOps -> Organization Settings -> Pipelines: Agent Pools -> and click the Add Pool button
-![Create a pool 1](./images/Agent-Pool-01.png)
+
+  ![Create a pool 1](./images/Agent-Pool-01.png)
 
 - Select Pool type of `Self-Hosted`, name the pool something like  'aca_build_runner', and uncheck `Auto-provision this agent pool in all projects`
-![Create a pool 2](./images/Agent-Pool-02.png)
+
+  ![Create a pool 2](./images/Agent-Pool-02.png)
 
 - Click `Create` and you should see your new pool
-![Created pool](./images/Agent-Pool-03.png)
+
+  ![Created pool](./images/Agent-Pool-03.png)
 
 ---
 
